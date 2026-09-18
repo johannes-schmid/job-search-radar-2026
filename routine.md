@@ -27,15 +27,21 @@ CANDIDATE PROFILE
 
 STEPS:
 
-1. JOB SEARCH: Use WebSearch (and WebFetch to open promising listings) to find currently-open roles matching the target roles above, across the target locations and remote. Run multiple targeted searches, e.g. "Senior Product Manager remote [current month/year]", "AI Product Manager remote", "Principal Product Manager Barcelona", "Product Manager Stockholm/Munich/Amsterdam/Singapore/Sydney/Toronto/Bangkok/Auckland", "Head of Product health tech remote", "Product Manager climate tech energy remote". Aim for 15-25 unique, currently-live listings. For each, capture: title, company, location/remote policy, salary if listed, source URL, 1-line company description.
+1. JOB SEARCH: Use WebSearch (and WebFetch to open promising listings) to find currently-open roles matching the target roles above, across the target locations and remote. Also pull real listings straight from Gmail job-alert emails (LinkedIn/Indeed alerts) when present - these already have real, working job URLs. Aim for 10-20 unique, currently-live listings. For each, capture: title, company, company domain (for a logo), location/remote policy, salary if listed, and a REAL working URL to the job posting (never fabricate a URL - use the exact link from the alert email or search result).
 
 2. SCORE each job 0-100% fit, weighing: seniority match, AI/PM specialization overlap, location/remote match, sector match, company stage (favor Series B+/established over early-stage), watchlist-company bonus. Mark AI/ML product roles with an "AI PM" badge. Mark watchlist companies with a star. Sort by fit score descending.
 
 3. EMAIL DIGGING: Use Gmail search_threads with a query like "(from:linkedin.com OR from:indeed.com OR subject:\"job alert\" OR subject:application OR subject:assessment) newer_than:8d" to find the last week's job-related emails. Read relevant ones with get_message. Summarize into a short "Needs Your Attention" list: pending assessments/deadlines, recruiter replies awaiting response, new inbound recruiter messages, notably strong LinkedIn alert listings. Do not reply/label/modify anything - just summarize.
 
-4. CAREER COACH CORNER: Use WebSearch to find 2-4 recent (last ~4-6 weeks) articles/podcasts/reports on where product management (esp. AI-native PM) is heading. Summarize takeaways in 3-5 bullets. Suggest 2-3 specific, currently-available courses/certifications (Maven, Reforge, DeepLearning.AI, Product School, etc.) for the NEXT level beyond his existing Certified AI Product Manager / Maven AI Evals / Agentic AI Applications certs - not repeats.
+4. CAREER COACH CORNER: Use WebSearch to find real, current links for: (a) one recent (last ~4-6 weeks) podcast episode or article on where product management (esp. AI-native PM) is heading, (b) one recent real LinkedIn post on the same topic, and (c) 2-3 specific, currently-available courses/certifications (Maven, Reforge, DeepLearning.AI, Product School, etc.) for the NEXT level beyond his existing Certified AI Product Manager / Maven AI Evals / Agentic AI Applications certs. Every item must link to a real URL found via search - never fabricate a link.
 
-5. COMPOSE one self-contained HTML email (inline CSS only, no external assets/CDNs): header with today's date + summary line (X jobs found, avg fit, top match); ranked job cards (title, company, location, color-coded fit % badge — green >=70/yellow 40-69/red <40, AI PM star, watchlist star, salary if known, link); "Needs Your Attention" section; "Career Coach Corner" section. Clean and scannable.
+5. COMPOSE one self-contained HTML email (inline CSS only, no external assets/CDNs except company logos via https://logo.clearbit.com/<domain>?size=40 - fall back to a small colored initial-letter badge if the domain is unknown/uncertain):
+   - Header with a dark-to-green gradient background (e.g. linear-gradient(135deg,#1d1b1c 0%,#274430 55%,#3d6b48 100%), with a background-color fallback declared first for clients that don't render gradients), today's date, and a one-line summary (X jobs found, avg fit, top match).
+   - Jobs as a compact HTML TABLE (not long cards) with columns: logo+role+company, location, fit % (gradient pill badge, green tones >=70/gold tones 40-69/red <40), tags (AI PM / watchlist star), and a "View →" link to the real job URL. Every single row must have a working link.
+   - A one-line "also seen, lower fit" summary for anything below the table cutoff, not full rows.
+   - "Needs Your Attention" as a compact TABLE: Item | Status | Suggested action.
+   - "Career Coach Corner": a podcast/article link, a LinkedIn post link, and a bulleted list of course links - all real URLs.
+   - Keep the whole email materially shorter/more compressed than a wall of cards - this should be skimmable in under a minute.
 
 6. SEND via Gmail send_message to schmid.johannes90@gmail.com, subject "Job Radar - [date] - X new matches", HTML body. Always actually send the email - that's the deliverable, even if some sections turn up thin.
 ```
@@ -48,5 +54,13 @@ STEPS:
 - If the session this is bound to is ever deleted, the routine breaks
   silently (fires into a session that no longer exists). Worth an occasional
   check that Monday emails are still arriving.
-- A same-day test run (see `sample-report.html` in this repo, if present)
-  validated the full pipeline end-to-end on 2026-09-18.
+- CSS gradients aren't universally supported across email clients; the
+  prompt requires a solid `background-color` fallback declared before the
+  `background: linear-gradient(...)` so the header/pills degrade to a flat
+  color instead of going transparent.
+- Company logos use Clearbit's public logo API by guessed domain — falls
+  back to a colored initial-letter badge when the domain is uncertain, since
+  a wrong guess would either 404 or (worse) show the wrong company's logo.
+- Two test runs (v1: card layout, v2: compact gradient table style with
+  logos and real links, per Johannes's styling feedback) validated the full
+  pipeline end-to-end on 2026-09-18. `sample-report.html` reflects v2.
